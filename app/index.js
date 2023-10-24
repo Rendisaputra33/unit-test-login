@@ -10,10 +10,14 @@ export default function Login() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      AsyncStorage.getItem("token").then((res) => {
-        setLoading(res);
-        setIsauthenticated(res != null);
-      });
+      AsyncStorage.getItem("token")
+        .then((res) => {
+          setLoading(false);
+          setIsauthenticated(res != null);
+        })
+        .catch((err) => {
+          alert(err.message);
+        });
     }, 1000);
 
     return () => clearTimeout(timeout);

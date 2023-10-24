@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
+import { Text, View, Button, Platform, StatusBar } from "react-native";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,11 +20,15 @@ export default function Main() {
   const responseListener = useRef();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => {
-      setExpoPushToken(token);
-      AsyncStorage.setItem("token", token);
-      schedulePushNotification();
-    });
+    registerForPushNotificationsAsync()
+      .then((token) => {
+        setExpoPushToken(token);
+        AsyncStorage.setItem("token", token);
+        schedulePushNotification();
+      })
+      .catch((err) => {
+        alert(err);
+      });
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -52,6 +56,7 @@ export default function Main() {
         justifyContent: "space-around",
       }}
     >
+      <StatusBar barStyle={"dark-content"} />
       <Text>Your expo push token: {expoPushToken}</Text>
       <Button
         title="click to copied"
@@ -100,7 +105,6 @@ async function registerForPushNotificationsAsync() {
       projectId: Constants.expoConfig.extra.eas.projectId,
     })
   ).data;
-  console.log(token);
 
   return token;
 }
