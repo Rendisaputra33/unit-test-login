@@ -6,14 +6,18 @@ import { ActivityIndicator, Dimensions, View } from "react-native";
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsauthenticated] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       AsyncStorage.getItem("token")
         .then((res) => {
           setLoading(false);
-          setIsauthenticated(res != null);
+          if (res !== null) {
+            router.replace("/main");
+          } else {
+            console.log("else");
+            router.replace("/login");
+          }
         })
         .catch((err) => {
           alert(err.message);
@@ -22,14 +26,6 @@ export default function Login() {
 
     return () => clearTimeout(timeout);
   }, []);
-
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      router.replace("/main");
-    } else if (!loading && !isAuthenticated) {
-      router.replace("/login");
-    }
-  }, [loading, isAuthenticated]);
 
   return (
     <View
