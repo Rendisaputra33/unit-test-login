@@ -15,7 +15,6 @@ export default function Login() {
           if (res !== null) {
             router.replace("/main");
           } else {
-            console.log("else");
             router.replace("/login");
           }
         })
