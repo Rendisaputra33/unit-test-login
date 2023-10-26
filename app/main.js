@@ -4,6 +4,7 @@ import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Clipboard from "expo-clipboard";
+import { router } from "expo-router";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -24,7 +25,6 @@ export default function Main() {
       .then((token) => {
         setExpoPushToken(token);
         AsyncStorage.setItem("token", token);
-        schedulePushNotification();
       })
       .catch((err) => {
         alert(err);
@@ -62,19 +62,15 @@ export default function Main() {
         title="click to copied"
         onPress={() => Clipboard.setStringAsync(expoPushToken)}
       />
+      <Button
+        title="logout"
+        onPress={async () => {
+          await AsyncStorage.clear();
+          router.replace("/login");
+        }}
+      />
     </View>
   );
-}
-
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "Login Successfully",
-      body: "congratulation to successfully logined to app",
-      data: { data: "goes here" },
-    },
-    trigger: { seconds: 1 },
-  });
 }
 
 async function registerForPushNotificationsAsync() {
